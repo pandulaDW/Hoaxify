@@ -13,3 +13,5 @@ app.get("/", handler);
 app.listen(5000, () => {
   console.log("Starting the server...");
 });
+
+export default app;
