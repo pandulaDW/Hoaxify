@@ -4,7 +4,7 @@ const app = express();
 
 app.get("/", (_, res) => {
   res.json({
-    message: "This ends right here, now!",
+    message: "This ends right here, now!!",
   });
 });
 
