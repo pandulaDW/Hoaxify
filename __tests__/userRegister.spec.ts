@@ -39,7 +39,7 @@ describe("User Registration", () => {
   it("saves the username and email to database", async () => {
     await postValidUser();
     const userList = await User.findAll();
-    const savedUser = await userList[0];
+    const savedUser = userList[0];
     expect(savedUser.username).toBe("user1");
     expect(savedUser.email).toBe("user1@gmail.com");
   });
