@@ -1,7 +1,12 @@
 import { Model, STRING } from "sequelize";
 import sequelize from "../config/database";
+import { UserAttributes } from "../models/userModels";
 
-class User extends Model {}
+class User extends Model<UserAttributes> {
+  public username!: string;
+  public email!: string;
+  public password!: string;
+}
 
 User.init(
   {

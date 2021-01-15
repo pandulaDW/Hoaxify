@@ -66,9 +66,26 @@ describe("User Registration", () => {
       })
       .then(() => {
         User.findAll().then((userList) => {
-          const savedUser: any = userList[0];
+          const savedUser = userList[0];
           expect(savedUser.username).toBe("user1");
           expect(savedUser.email).toBe("user1@gmail.com");
+          done();
+        });
+      });
+  });
+
+  it("hashes the password in database", (done) => {
+    request(app)
+      .post("/api/1.0/users")
+      .send({
+        username: "user1",
+        email: "user1@gmail.com",
+        password: "PAssword",
+      })
+      .then(() => {
+        User.findAll().then((userList) => {
+          const savedUser = userList[0];
+          expect(savedUser.password).not.toBe("PAssword");
           done();
         });
       });
