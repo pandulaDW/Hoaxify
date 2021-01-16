@@ -6,8 +6,9 @@ import { save } from "./userService";
 const router = Router();
 
 const validationMiddlewares = [
-  check("username").notEmpty(),
-  check("email").notEmpty(),
+  check("username").notEmpty().withMessage("username cannot be empty"),
+  check("email").notEmpty().withMessage("email cannot be empty"),
+  check("password").notEmpty().withMessage("password cannot be empty"),
 ];
 
 router.post("/", ...validationMiddlewares, async (req, res) => {

@@ -7,9 +7,7 @@ export const convertToValidationObj = (
   const validationErrors = errors
     .array()
     .reduce<{ [key: string]: string }>((acc, curr) => {
-      const message =
-        curr.value === null ? `${curr.param} cannot be empty` : curr.msg;
-      acc[curr.param] = message;
+      acc[curr.param] = curr.msg;
       return acc;
     }, {});
   return { validationErrors };

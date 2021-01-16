@@ -53,6 +53,22 @@ describe("User Registration", () => {
     expect(savedUser.password).not.toBe("PAssword");
   });
 
+  it.each`
+    field         | expected
+    ${"username"} | ${"username cannot be empty"}
+    ${"email"}    | ${"email cannot be empty"}
+    ${"password"} | ${"password cannot be empty"}
+  `("returns $expected when $field is null", async ({ field, expected }) => {
+    const user = {
+      username: "user1",
+      email: "user1@email.com",
+      password: "PassWord",
+    };
+    user[field] = null;
+    const response = await postUser(user);
+    expect(response.body.validationErrors[field]).toBe(expected);
+  });
+
   it("returns 400 when username is null", async () => {
     const response = await postUser({
       username: null,
@@ -70,26 +86,6 @@ describe("User Registration", () => {
     });
     const body = response.body;
     expect(body.validationErrors).not.toBeUndefined();
-  });
-
-  it("returns username cannot be empty when username is null", async () => {
-    const response = await postUser({
-      username: null,
-      email: "test@test.com",
-      password: "PAssword",
-    });
-    const body = response.body;
-    expect(body.validationErrors.username).toBe("username cannot be empty");
-  });
-
-  it("returns email cannot be empty when email is null", async () => {
-    const response = await postUser({
-      username: "user1",
-      email: null,
-      password: "PAssword",
-    });
-    const body = response.body;
-    expect(body.validationErrors.email).toBe("email cannot be empty");
   });
 
   it("returns errors for both when username and email is null", async () => {
