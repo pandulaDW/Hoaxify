@@ -6,7 +6,11 @@ export interface UserAttributes {
 
 export type UserSignUpRequest = UserAttributes;
 
-export interface ValidationObj {
+export interface AuthResponse {
+  message: string;
+}
+
+export interface ValidationRes {
   validationErrors: {
     [key: string]: string;
   };

@@ -6,7 +6,12 @@ import { save } from "./userService";
 const router = Router();
 
 const validationMiddlewares = [
-  check("username").notEmpty().withMessage("username cannot be empty"),
+  check("username")
+    .notEmpty()
+    .withMessage("username cannot be empty")
+    .bail()
+    .isLength({ min: 4 })
+    .withMessage("username must have min 4 and max 32 characters"),
   check("email").notEmpty().withMessage("email cannot be empty"),
   check("password").notEmpty().withMessage("password cannot be empty"),
 ];

@@ -2,6 +2,11 @@ import request from "supertest";
 import app from "../src/app";
 import User from "../src/user/User";
 import sequelize from "../src/config/database";
+import {
+  UserAttributes,
+  AuthResponse,
+  ValidationRes,
+} from "../src/models/userModels";
 
 beforeAll(() => {
   return sequelize.sync();
@@ -11,6 +16,8 @@ beforeEach(() => {
   return User.destroy({ truncate: true });
 });
 
+type NullableUser = Partial<UserAttributes>;
+
 const validUser = {
   username: "user1",
   email: "user1@gmail.com",
@@ -18,7 +25,7 @@ const validUser = {
 };
 
 describe("User Registration", () => {
-  const postUser = (user = validUser) => {
+  const postUser = (user = validUser as NullableUser) => {
     return request(app).post("/api/1.0/users").send(user);
   };
 
@@ -29,7 +36,7 @@ describe("User Registration", () => {
 
   it("returns success message when signup request is valid", async () => {
     const response = await postUser();
-    expect(response.body).toEqual({ message: "user created" });
+    expect(response.body as AuthResponse).toEqual({ message: "user created" });
   });
 
   it("saves the user to database", async () => {
@@ -59,24 +66,22 @@ describe("User Registration", () => {
     ${"email"}    | ${"email cannot be empty"}
     ${"password"} | ${"password cannot be empty"}
   `("returns $expected when $field is null", async ({ field, expected }) => {
-    const user = {
-      username: "user1",
-      email: "user1@email.com",
-      password: "PassWord",
-    };
+    const user = { ...validUser } as NullableUser;
     user[field] = null;
     const response = await postUser(user);
-    expect(response.body.validationErrors[field]).toBe(expected);
+    const body = response.body as ValidationRes;
+    expect(body.validationErrors[field]).toBe(expected);
   });
 
-  it("returns 400 when username is null", async () => {
-    const response = await postUser({
-      username: null,
-      email: "test@test.com",
-      password: "PAssword",
-    });
-    expect(response.status).toBe(400);
-  });
+  it.each([["username"], ["email"], ["password"]])(
+    "returns 400 when %s is null",
+    async (field) => {
+      const user = { ...validUser } as NullableUser;
+      user[field] = null;
+      const response = await postUser(user);
+      expect(response.status).toBe(400);
+    }
+  );
 
   it("returns validationErrors field in response body when validation error occurs", async () => {
     const response = await postUser({
@@ -84,7 +89,7 @@ describe("User Registration", () => {
       email: "test@test.com",
       password: "PAssword",
     });
-    const body = response.body;
+    const body = response.body as ValidationRes;
     expect(body.validationErrors).not.toBeUndefined();
   });
 
@@ -94,7 +99,19 @@ describe("User Registration", () => {
       email: null,
       password: "PAssword",
     });
-    const body = response.body;
+    const body = response.body as ValidationRes;
     expect(Object.keys(body.validationErrors)).toEqual(["username", "email"]);
+  });
+
+  it("returns size validation error when username is less than 4 characters", async () => {
+    const response = await postUser({
+      username: "use",
+      email: "test@test.com",
+      password: "PAssword",
+    });
+    const body = response.body as ValidationRes;
+    expect(body.validationErrors.username).toBe(
+      "username must have min 4 and max 32 characters"
+    );
   });
 });

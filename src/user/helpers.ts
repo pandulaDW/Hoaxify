@@ -1,9 +1,9 @@
 import { Result, ValidationError } from "express-validator";
-import { ValidationObj } from "../models/userModels";
+import { ValidationRes } from "../models/userModels";
 
 export const convertToValidationObj = (
   errors: Result<ValidationError>
-): ValidationObj => {
+): ValidationRes => {
   const validationErrors = errors
     .array()
     .reduce<{ [key: string]: string }>((acc, curr) => {
