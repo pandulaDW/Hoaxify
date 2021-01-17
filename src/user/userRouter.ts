@@ -10,10 +10,25 @@ const validationMiddlewares = [
     .notEmpty()
     .withMessage("username cannot be empty")
     .bail()
-    .isLength({ min: 4 })
+    .isLength({ min: 4, max: 32 })
     .withMessage("username must have min 4 and max 32 characters"),
-  check("email").notEmpty().withMessage("email cannot be empty"),
-  check("password").notEmpty().withMessage("password cannot be empty"),
+  check("email")
+    .notEmpty()
+    .withMessage("email cannot be empty")
+    .bail()
+    .isEmail()
+    .withMessage("email is not valid"),
+  check("password")
+    .notEmpty()
+    .withMessage("password cannot be empty")
+    .bail()
+    .isLength({ min: 6 })
+    .withMessage("password must be at least 6 characters")
+    .bail()
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/)
+    .withMessage(
+      "password must have at least 1 uppercase, 1 lowercase and 1 number"
+    ),
 ];
 
 router.post("/", ...validationMiddlewares, async (req, res) => {
