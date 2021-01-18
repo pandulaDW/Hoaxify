@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { check, validationResult } from "express-validator";
 import { convertToValidationObj } from "./helpers";
-import { save } from "./userService";
+import { save, findByEmail } from "./userService";
 
 const router = Router();
 
@@ -17,7 +17,12 @@ const validationMiddlewares = [
     .withMessage("email cannot be empty")
     .bail()
     .isEmail()
-    .withMessage("email is not valid"),
+    .withMessage("email is not valid")
+    .bail()
+    .custom(async (email: string) => {
+      const user = await findByEmail(email);
+      if (user) throw new Error("email in use");
+    }),
   check("password")
     .notEmpty()
     .withMessage("password cannot be empty")

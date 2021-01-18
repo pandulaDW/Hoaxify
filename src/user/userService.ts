@@ -8,3 +8,7 @@ export const save = async (reqBody: UserSignUpRequest) => {
   const user: UserAttributes = { ...reqBody, password: hashedPassword };
   return await User.create(user);
 };
+
+export const findByEmail = async (email: string) => {
+  return await User.findOne({ where: { email } });
+};
