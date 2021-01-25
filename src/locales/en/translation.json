@@ -1,0 +1,8 @@
+{
+  "fieldNull": "username cannot be empty",
+  "usernameSize": "username must have min 4 and max 32 characters",
+  "emailInvalid": "email is not valid",
+  "passwordNotEnoughCh": "password must be at least 6 characters",
+  "passwordNotMatching": "password must have at least 1 uppercase, 1 lowercase and 1 number",
+  "emailInUse": "email in use"
+}
