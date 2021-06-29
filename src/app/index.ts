@@ -1,5 +1,5 @@
 import app from "./app";
 
 app.listen(4000, () => {
-  console.log("listening to stuff...");
+  console.log("listening to stuff on port 4000...");
 });
